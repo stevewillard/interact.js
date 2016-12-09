@@ -3334,6 +3334,12 @@ Interactable.prototype.styleCursor = function (newValue) {
 
 Interactable.prototype.defaultActionChecker = function (pointer, event, interaction, element) {
   var rect = this.getRect(element);
+  var buttons = event.buttons || ({
+    0: 1,
+    1: 4,
+    3: 8,
+    4: 16
+  })[event.button];
   var action = null;
 
   for (var _iterator = actions.names, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
@@ -3351,7 +3357,7 @@ Interactable.prototype.defaultActionChecker = function (pointer, event, interact
     var actionName = _ref;
 
     // check mouseButton setting if the pointer is down
-    if (interaction.pointerIsDown && interaction.mouse && (event.buttons & this.options[actionName].mouseButtons) === 0) {
+    if (interaction.pointerIsDown && interaction.mouse && (buttons & this.options[actionName].mouseButtons) === 0) {
       continue;
     }
 
@@ -5758,9 +5764,21 @@ var browser = {
 
   useMatchesSelectorPolyfill: false,
 
-  pEventTypes: domObjects.PointerEvent ? domObjects.PointerEvent === win.window.MSPointerEvent ? { up: 'MSPointerUp', down: 'MSPointerDown', over: 'mouseover',
-    out: 'mouseout', move: 'MSPointerMove', cancel: 'MSPointerCancel' } : { up: 'pointerup', down: 'pointerdown', over: 'pointerover',
-    out: 'pointerout', move: 'pointermove', cancel: 'pointercancel' } : null,
+  pEventTypes: domObjects.PointerEvent ? domObjects.PointerEvent === win.window.MSPointerEvent ? {
+    up: 'MSPointerUp',
+    down: 'MSPointerDown',
+    over: 'mouseover',
+    out: 'mouseout',
+    move: 'MSPointerMove',
+    cancel: 'MSPointerCancel'
+  } : {
+    up: 'pointerup',
+    down: 'pointerdown',
+    over: 'pointerover',
+    out: 'pointerout',
+    move: 'pointermove',
+    cancel: 'pointercancel'
+  } : null,
 
   // because Webkit and Opera still use 'mousewheel' event type
   wheelEvent: 'onmousewheel' in domObjects.document ? 'mousewheel' : 'wheel'
